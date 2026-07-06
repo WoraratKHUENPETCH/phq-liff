@@ -1,185 +1,169 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>แบบประเมิน PHQ</title>
-  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: 'Sarabun', 'Helvetica Neue', sans-serif;
-      background: #f0f4f8;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .card {
-      background: white;
-      border-radius: 20px;
-      padding: 40px 32px;
-      max-width: 360px;
-      width: 90%;
-      text-align: center;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.10);
-    }
-
-    .logo {
-      width: 64px;
-      height: 64px;
-      background: #06C755;
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 24px;
-    }
-
-    .logo svg {
-      width: 38px;
-      height: 38px;
-      fill: white;
-    }
-
-    h1 {
-      font-size: 20px;
-      font-weight: 700;
-      color: #1a1a2e;
-      margin-bottom: 8px;
-    }
-
-    p {
-      font-size: 14px;
-      color: #666;
-      line-height: 1.6;
-      margin-bottom: 28px;
-    }
-
-    .spinner {
-      width: 40px;
-      height: 40px;
-      border: 4px solid #e0e0e0;
-      border-top-color: #06C755;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin: 0 auto 20px;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .status {
-      font-size: 13px;
-      color: #888;
-      margin-top: 8px;
-    }
-
-    .btn {
-      display: inline-block;
-      background: #06C755;
-      color: white;
-      border: none;
-      border-radius: 12px;
-      padding: 14px 32px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      text-decoration: none;
-      margin-top: 8px;
-      transition: background 0.2s;
-    }
-
-    .btn:hover { background: #05a847; }
-
-    .error-icon {
-      font-size: 40px;
-      margin-bottom: 16px;
-    }
-
-    #loading { display: block; }
-    #ready { display: none; }
-    #error { display: none; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แบบประเมินภาวะซึมเศร้าในวัยรุ่น (PHQ-A)</title>
+    <!-- เรียกใช้งาน Tailwind CSS -->
+    <script src="https://tailwindcss.com"></script>
+    <!-- LINE LIFF SDK v2 -->
+    <script src="https://line-scdn.net"></script>
 </head>
-<body>
-  <div class="card">
+<body class="bg-slate-50 min-h-screen font-sans antialiased text-slate-800">
 
-    <!-- Loading State -->
-    <div id="loading">
-      <div class="logo">
-        <svg viewBox="0 0 24 24"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
-      </div>
-      <div class="spinner"></div>
-      <h1>กำลังโหลด...</h1>
-      <p class="status" id="statusText">กำลังเชื่อมต่อกับ LINE</p>
+    <div class="max-w-2xl mx-auto p-4 sm:p-6 bg-white min-h-screen sm:min-h-0 sm:my-8 sm:rounded-2xl sm:shadow-lg border border-slate-100">
+        
+        <!-- Header -->
+        <div class="text-center border-b border-slate-100 pb-5 mb-6">
+            <h2 class="text-xl font-bold text-indigo-600">แบบประเมินภาวะซึมเศร้าในวัยรุ่น (PHQ-A)</h2>
+            <p class="text-xs text-slate-400 mt-2">คำชี้แจง: ในช่วง 2 สัปดาห์ที่ผ่านมา คุณมีอาการต่อไปนี้บ่อยแค่ไหน?</p>
+        </div>
+        
+        <!-- บล็อกข้อมูลโปรไฟล์ LINE -->
+        <div class="flex items-center gap-4 mb-6 p-4 bg-slate-50 rounded-xl border border-slate-100 text-sm">
+            <img id="userPicture" class="w-12 h-12 rounded-full ring-2 ring-indigo-100 hidden" src="" alt="Profile">
+            <div>
+                <p class="font-semibold text-slate-700" id="lineUserName">กำลังโหลดข้อมูลโปรไฟล์...</p>
+                <p class="text-xs text-slate-400 truncate max-w-[250px]" id="lineUserId">User ID: -</p>
+            </div>
+        </div>
+
+        <!-- ฟอร์มกรอกข้อมูล -->
+        <form id="phqForm" class="space-y-6">
+            
+            <!-- ข้อมูลพื้นฐานนักเรียน -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">ชื่อ - นามสกุล นักเรียน</label>
+                    <input type="text" id="studentName" required placeholder="ระบุชื่อ-นามสกุล" 
+                           class="w-full px-4 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">อายุ (ปี)</label>
+                        <input type="number" id="studentAge" required placeholder="อายุ" 
+                               class="w-full px-4 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">เพศ</label>
+                        <select id="studentGender" required class="w-full px-4 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
+                            <option value="ชาย">ชาย</option>
+                            <option value="หญิง">หญิง</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ส่วนคำถาม 9 ข้อหลัก -->
+            <div class="space-y-5 pt-4 border-t border-slate-100" id="questionsContainer">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">ส่วนที่ 1: แบบประเมินพฤติกรรม 9 ข้อหลัก</p>
+                <!-- ข้อคำถามจะถูกวนลูปแสดงผลด้วย JavaScript ด้านล่างเพื่อลดความยาวโค้ด -->
+            </div>
+
+            <!-- ส่วนคำถามพิเศษ 2 ข้อ (ประเมินความเสี่ยงวิกฤต) -->
+            <div class="space-y-4 pt-6 border-t border-slate-100 bg-rose-50/30 p-4 rounded-xl border border-rose-100/50">
+                <p class="text-xs font-bold text-rose-500 uppercase tracking-wider">ส่วนที่ 2: คำถามประเมินความเสี่ยงเพิ่มเติม</p>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">10. ใน 1 เดือนที่ผ่านมา มีช่วงไหนที่คุณมีความคิดอยากตาย หรือไม่อยากมีชีวิตอยู่อย่างจริงจังหรือไม่?</label>
+                    <div class="flex gap-4">
+                        <label class="flex items-center gap-2 text-sm"><input type="radio" name="specialQ1" value="true" required class="text-rose-600 focus:ring-rose-500"> ใช่</label>
+                        <label class="flex items-center gap-2 text-sm"><input type="radio" name="specialQ1" value="false" class="text-slate-600 focus:ring-slate-500"> ไม่ใช่</label>
+                    </div>
+                </div>
+
+                <div class="mt-3">
+                    <label class="block text-sm font-medium text-slate-700 mb-2">11. ตลอดชีวิตที่ผ่านมา คุณเคยพยายามที่จะทำให้ตัวเองตาย หรือลงมือฆ่าตัวตายหรือไม่?</label>
+                    <div class="flex gap-4">
+                        <label class="flex items-center gap-2 text-sm"><input type="radio" name="specialQ2" value="true" required class="text-rose-600 focus:ring-rose-500"> ใช่</label>
+                        <label class="flex items-center gap-2 text-sm"><input type="radio" name="specialQ2" value="false" class="text-slate-600 focus:ring-slate-500"> ไม่ใช่</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ปุ่มส่งฟอร์ม -->
+            <div class="pt-4">
+                <button type="submit" id="btnSubmit" class="w-full bg-indigo-600 text-white font-medium py-3 rounded-xl hover:bg-indigo-700 active:scale-[0.99] transition shadow-md disabled:bg-slate-300 disabled:cursor-not-allowed">
+                    ส่งข้อมูลประเมิน
+                </button>
+            </div>
+        </form>
     </div>
 
-    <!-- Ready State -->
-    <div id="ready">
-      <div class="logo">
-        <svg viewBox="0 0 24 24"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
-      </div>
-      <h1>แบบประเมินสุขภาพจิต</h1>
-      <p>ระบบพร้อมแล้ว กดปุ่มด้านล่างเพื่อเริ่มทำแบบประเมิน PHQ-9</p>
-      <a id="formLink" href="#" class="btn">เริ่มทำแบบประเมิน →</a>
-    </div>
+    <script>
+        // 🛠️ คอนฟิกหลัก (ใส่ ID และ URL ของคุณตรงนี้)
+        const LIFF_ID = "YOUR_LIFF_ID_HERE"; 
+        const POWER_AUTOMATE_URL = "YOUR_POWER_AUTOMATE_HTTP_URL_HERE"; 
 
-    <!-- Error State -->
-    <div id="error">
-      <div class="error-icon">⚠️</div>
-      <h1>เกิดข้อผิดพลาด</h1>
-      <p id="errorText">กรุณาเปิดผ่าน LINE เท่านั้น</p>
-    </div>
+        let userLineId = "";
 
-  </div>
+        // รายการข้อคำถาม 1-9 ตามเอกสาร PHQ-A
+        const phqQuestions = [
+            "รู้สึกซึม เศร้า หงุดหงิด หรือสิ้นหวัง",
+            "เบื่อ ไม่ค่อยสนใจหรือไม่เพลิดเพลิน เวลาทำสิ่งต่างๆ",
+            "นอนหลับยาก รู้สึกง่วงทั้งวัน หรือนอนมากเกินไป",
+            "ไม่อยากอาหาร น้ำหนักลด หรือกินมากกว่าปกติ",
+            "รู้สึกเหนื่อยล้า หรือไม่ค่อยมีพลัง",
+            "รู้สึกแย่กับตัวเอง หรือรู้สึกว่าตัวเองล้มเหลว หรือทำให้ตัวเองหรือครอบครัวผิดหวัง",
+            "จดจ่อกับสิ่งต่างๆ ได้ยาก เช่น ทำการบ้าน อ่านหนังสือ หรือดูโทรทัศน์",
+            "พูดหรือทำอะไรช้าลงมากจนคนอื่นสังเกตเห็นได้ หรือในทางตรงกันข้ามคือ กระสับกระс่ายหรือกระวนกระวาย จนต้องเคลื่อนไหวไปมามากกว่าปกติ",
+            "คิดว่าถ้าตายไปเสียจะดีกว่า หรือคิดจะทำร้ายตัวเองด้วยวิธีใดวิธีหนึ่ง"
+        ];
 
-  <script>
-    // ===== ตั้งค่าตรงนี้ =====
-    const LIFF_ID = "2010616371-ze2MMI8U"; // ← ใส่ LIFF ID จาก LINE Developers
-    const FORM_BASE_URL = "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=V2MauMjTw0GOH7MpRqSG-bAbki93nf5Pp2sn7HVf84dUNTRKN0ZLVFJSWjYwMDdJQ1NEQjBSQjhRSC4u";
-    const PREFILL_FIELD = "r_lineuid"; // ← ชื่อ field ใน MS Form ที่เก็บ LINE User ID
-    // =========================
+        // เรนเดอร์ข้อคำถาม 9 ข้อลงหน้าเว็บอัตโนมัติ
+        const container = document.getElementById("questionsContainer");
+        phqQuestions.forEach((qText, index) => {
+            const qNum = index + 1;
+            const qDiv = document.createElement("div");
+            qDiv.className = "bg-slate-50/50 p-4 rounded-xl border border-slate-100 space-y-2";
+            qDiv.innerHTML = `
+                <label class="block text-sm font-medium text-slate-700">${qNum}. ${qText}</label>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-xs">
+                    <label class="flex items-center gap-1.5 p-2 bg-white rounded border border-slate-200 cursor-pointer"><input type="radio" name="q${qNum}" value="0" required> ไม่มีเลย (0)</label>
+                    <label class="flex items-center gap-1.5 p-2 bg-white rounded border border-slate-200 cursor-pointer"><input type="radio" name="q${qNum}" value="1"> มีบางวัน (1)</label>
+                    <label class="flex items-center gap-1.5 p-2 bg-white rounded border border-slate-200 cursor-pointer"><input type="radio" name="q${qNum}" value="2"> มีมากกว่า 7 วัน (2)</label>
+                    <label class="flex items-center gap-1.5 p-2 bg-white rounded border border-slate-200 cursor-pointer"><input type="radio" name="q${qNum}" value="3"> มีแทบทุกวัน (3)</label>
+                </div>
+            `;
+            container.appendChild(qDiv);
+        });
 
-    async function init() {
-      try {
-        document.getElementById('statusText').textContent = 'กำลังดึงข้อมูลผู้ใช้...';
-
-        await liff.init({ liffId: LIFF_ID });
-
-        if (!liff.isLoggedIn()) {
-          liff.login();
-          return;
+        // เริ่มทำงาน LIFF Framework
+        async function initializeLiffApp() {
+            try {
+                await liff.init({ liffId: LIFF_ID });
+                if (liff.isLoggedIn()) { getProfileData(); } else { liff.login(); }
+            } catch (err) { console.error(err); }
         }
 
-        const profile = await liff.getProfile();
-        const userId = profile.userId;
+        async function getProfileData() {
+            const profile = await liff.getProfile();
+            userLineId = profile.userId;
+            document.getElementById("lineUserId").innerText = `User ID: ${profile.userId}`;
+            document.getElementById("lineUserName").innerText = profile.displayName;
+            if (profile.pictureUrl) {
+                const img = document.getElementById("userPicture");
+                img.src = profile.pictureUrl;
+                img.classList.remove("hidden");
+            }
+        }
 
-        // สร้าง Form URL พร้อม userId
-        const formUrl = `${FORM_BASE_URL}&${PREFILL_FIELD}=${encodeURIComponent(userId)}`;
+        // ประมวลผลเมื่อกดส่งฟอร์ม
+        document.getElementById("phqForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById("btnSubmit");
+            btn.disabled = true;
+            btn.innerText = "กำลังส่งข้อมูลประเมิน...";
 
-        document.getElementById('statusText').textContent = 'พร้อมแล้ว!';
+            // 1. คำนวณคะแนนรวม 9 ข้อแรก
+            let totalScore = 0;
+            for(let i=1; i<=9; i++) {
+                totalScore += parseInt(document.querySelector(`input[name="q${i}"]:checked`).value);
+            }
 
-        // Auto redirect หลัง 1 วินาที
-        document.getElementById('formLink').href = formUrl;
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('ready').style.display = 'block';
+            // 2. เช็คเงื่อนไขความเสี่ยงวิกฤต (hasRisk) ตามเกณฑ์แพทย์
+            const q9Score = parseInt(document.querySelector('input[name="q9"]:checked').value);
+            const specialQ1 = document.querySelector('input[name="specialQ1"]:checked').value === "true";
+            const specialQ2 = document.querySelector('input[name="specialQ2"]:checked').value === "true";
 
-        setTimeout(() => {
-          window.location.href = formUrl;
-        }, 1000);
-
-      } catch (err) {
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('error').style.display = 'block';
-        document.getElementById('errorText').textContent = err.message || 'กรุณาเปิดผ่าน LINE เท่านั้น';
-      }
-    }
-
-    init();
-  </script>
-</body>
-</html>
+            // ถ้าข้อ 9 ได้คะแนนอย่างน้อย 1 คะแนน หรือ ข้อพิเศษตอบ "ใช่" ข้อใดข้อหนึ่ง = มีความเสี่ยงวิกฤตทันที
