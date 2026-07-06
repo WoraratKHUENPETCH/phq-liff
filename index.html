@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>แบบประเมิน PHQ</title>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Sarabun', 'Helvetica Neue', sans-serif;
+      background: #f0f4f8;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card {
+      background: white;
+      border-radius: 20px;
+      padding: 40px 32px;
+      max-width: 360px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+    }
+
+    .logo {
+      width: 64px;
+      height: 64px;
+      background: #06C755;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+    }
+
+    .logo svg {
+      width: 38px;
+      height: 38px;
+      fill: white;
+    }
+
+    h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: 8px;
+    }
+
+    p {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #e0e0e0;
+      border-top-color: #06C755;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .status {
+      font-size: 13px;
+      color: #888;
+      margin-top: 8px;
+    }
+
+    .btn {
+      display: inline-block;
+      background: #06C755;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 14px 32px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      margin-top: 8px;
+      transition: background 0.2s;
+    }
+
+    .btn:hover { background: #05a847; }
+
+    .error-icon {
+      font-size: 40px;
+      margin-bottom: 16px;
+    }
+
+    #loading { display: block; }
+    #ready { display: none; }
+    #error { display: none; }
+  </style>
+</head>
+<body>
+  <div class="card">
+
+    <!-- Loading State -->
+    <div id="loading">
+      <div class="logo">
+        <svg viewBox="0 0 24 24"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
+      </div>
+      <div class="spinner"></div>
+      <h1>กำลังโหลด...</h1>
+      <p class="status" id="statusText">กำลังเชื่อมต่อกับ LINE</p>
+    </div>
+
+    <!-- Ready State -->
+    <div id="ready">
+      <div class="logo">
+        <svg viewBox="0 0 24 24"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
+      </div>
+      <h1>แบบประเมินสุขภาพจิต</h1>
+      <p>ระบบพร้อมแล้ว กดปุ่มด้านล่างเพื่อเริ่มทำแบบประเมิน PHQ-9</p>
+      <a id="formLink" href="#" class="btn">เริ่มทำแบบประเมิน →</a>
+    </div>
+
+    <!-- Error State -->
+    <div id="error">
+      <div class="error-icon">⚠️</div>
+      <h1>เกิดข้อผิดพลาด</h1>
+      <p id="errorText">กรุณาเปิดผ่าน LINE เท่านั้น</p>
+    </div>
+
+  </div>
+
+  <script>
+    // ===== ตั้งค่าตรงนี้ =====
+    const LIFF_ID = "2010616371-ze2MMI8U"; // ← ใส่ LIFF ID จาก LINE Developers
+    const FORM_BASE_URL = "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=V2MauMjTw0GOH7MpRqSG-bAbki93nf5Pp2sn7HVf84dUNTRKN0ZLVFJSWjYwMDdJQ1NEQjBSQjhRSC4u";
+    const PREFILL_FIELD = "r_lineuid"; // ← ชื่อ field ใน MS Form ที่เก็บ LINE User ID
+    // =========================
+
+    async function init() {
+      try {
+        document.getElementById('statusText').textContent = 'กำลังดึงข้อมูลผู้ใช้...';
+
+        await liff.init({ liffId: LIFF_ID });
+
+        if (!liff.isLoggedIn()) {
+          liff.login();
+          return;
+        }
+
+        const profile = await liff.getProfile();
+        const userId = profile.userId;
+
+        // สร้าง Form URL พร้อม userId
+        const formUrl = `${FORM_BASE_URL}&${PREFILL_FIELD}=${encodeURIComponent(userId)}`;
+
+        document.getElementById('statusText').textContent = 'พร้อมแล้ว!';
+
+        // Auto redirect หลัง 1 วินาที
+        document.getElementById('formLink').href = formUrl;
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('ready').style.display = 'block';
+
+        setTimeout(() => {
+          window.location.href = formUrl;
+        }, 1000);
+
+      } catch (err) {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('error').style.display = 'block';
+        document.getElementById('errorText').textContent = err.message || 'กรุณาเปิดผ่าน LINE เท่านั้น';
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
