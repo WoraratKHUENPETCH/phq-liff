@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>แบบประเมินภาวะซึมเศร้าในวัยรุ่น (PHQ-A)</title>
-    <!-- เรียกใช้งาน Tailwind CSS -->
-    <script src="https://tailwindcss.com"></script>
-    <!-- LINE LIFF SDK v2 -->
-    <script src="https://line-scdn.net"></script>
+    <!-- แก้ไข: ใส่ CDN path ที่ถูกต้อง -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- แก้ไข: ใส่ LIFF SDK path ที่ถูกต้อง -->
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 </head>
 <body class="bg-slate-50 min-h-screen font-sans antialiased text-slate-800">
 
@@ -54,13 +54,34 @@
                 </div>
             </div>
 
+            <!-- ข้อมูลโรงเรียน -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">ชั้น</label>
+                    <input type="text" id="studentClass" required placeholder="เช่น ม.3/2"
+                           class="w-full px-4 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">โรงเรียน</label>
+                    <input type="text" id="school" required placeholder="ชื่อโรงเรียน"
+                           class="w-full px-4 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
+                </div>
+            </div>
+
+            <!-- เบอร์ผู้ปกครอง -->
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-2">เบอร์โทรผู้ปกครอง <span class="text-rose-500">*</span></label>
+                <input type="tel" id="parentPhone" required placeholder="เช่น 0812345678" maxlength="10"
+                       class="w-full px-4 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
+                <p class="text-xs text-slate-400 mt-1">📌 ใช้สำหรับติดต่อกรณีฉุกเฉินเท่านั้น</p>
+            </div>
+
             <!-- ส่วนคำถาม 9 ข้อหลัก -->
             <div class="space-y-5 pt-4 border-t border-slate-100" id="questionsContainer">
                 <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">ส่วนที่ 1: แบบประเมินพฤติกรรม 9 ข้อหลัก</p>
-                <!-- ข้อคำถามจะถูกวนลูปแสดงผลด้วย JavaScript ด้านล่างเพื่อลดความยาวโค้ด -->
             </div>
 
-            <!-- ส่วนคำถามพิเศษ 2 ข้อ (ประเมินความเสี่ยงวิกฤต) -->
+            <!-- ส่วนคำถามพิเศษ 2 ข้อ -->
             <div class="space-y-4 pt-6 border-t border-slate-100 bg-rose-50/30 p-4 rounded-xl border border-rose-100/50">
                 <p class="text-xs font-bold text-rose-500 uppercase tracking-wider">ส่วนที่ 2: คำถามประเมินความเสี่ยงเพิ่มเติม</p>
                 
@@ -91,13 +112,12 @@
     </div>
 
     <script>
-        // 🛠️ คอนฟิกหลัก (ใส่ ID และ URL ของคุณตรงนี้)
-        const LIFF_ID = "2010617312-d7V3j0uH"; 
-        const POWER_AUTOMATE_URL = "https://defaultb81a6357d3c841c38e1fb32946a486.f9.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/17/workflows/3dd22ffaf02a4b7088a5ae4df8696bb4/triggers/manual/paths/invoke?api-version=1"; 
+        const LIFF_ID = "2010616371-ze2MMI8U";
+        const POWER_AUTOMATE_URL = "https://defaultb81a6357d3c841c38e1fb32946a486.f9.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/31/workflows/32fbd58230ab4ca69a667cc6af8cb8fd/triggers/manual/paths/invoke?api-version=1";
 
         let userLineId = "";
+        let userDisplayName = "";
 
-        // รายการข้อคำถาม 1-9 ตามเอกสาร PHQ-A
         const phqQuestions = [
             "รู้สึกซึม เศร้า หงุดหงิด หรือสิ้นหวัง",
             "เบื่อ ไม่ค่อยสนใจหรือไม่เพลิดเพลิน เวลาทำสิ่งต่างๆ",
@@ -110,7 +130,6 @@
             "คิดว่าถ้าตายไปเสียจะดีกว่า หรือคิดจะทำร้ายตัวเองด้วยวิธีใดวิธีหนึ่ง"
         ];
 
-        // เรนเดอร์ข้อคำถาม 9 ข้อลงหน้าเว็บอัตโนมัติ
         const container = document.getElementById("questionsContainer");
         phqQuestions.forEach((qText, index) => {
             const qNum = index + 1;
@@ -128,17 +147,20 @@
             container.appendChild(qDiv);
         });
 
-        // เริ่มทำงาน LIFF Framework
         async function initializeLiffApp() {
             try {
                 await liff.init({ liffId: LIFF_ID });
                 if (liff.isLoggedIn()) { getProfileData(); } else { liff.login(); }
-            } catch (err) { console.error(err); }
+            } catch (err) {
+                console.error(err);
+                document.getElementById("lineUserName").innerText = "ไม่สามารถโหลดโปรไฟล์ได้";
+            }
         }
 
         async function getProfileData() {
             const profile = await liff.getProfile();
             userLineId = profile.userId;
+            userDisplayName = profile.displayName;
             document.getElementById("lineUserId").innerText = `User ID: ${profile.userId}`;
             document.getElementById("lineUserName").innerText = profile.displayName;
             if (profile.pictureUrl) {
@@ -148,22 +170,70 @@
             }
         }
 
-        // ประมวลผลเมื่อกดส่งฟอร์ม
         document.getElementById("phqForm").addEventListener("submit", async (e) => {
             e.preventDefault();
             const btn = document.getElementById("btnSubmit");
             btn.disabled = true;
             btn.innerText = "กำลังส่งข้อมูลประเมิน...";
 
-            // 1. คำนวณคะแนนรวม 9 ข้อแรก
             let totalScore = 0;
-            for(let i=1; i<=9; i++) {
-                totalScore += parseInt(document.querySelector(`input[name="q${i}"]:checked`).value);
+            const answers = {};
+            for (let i = 1; i <= 9; i++) {
+                const val = parseInt(document.querySelector(`input[name="q${i}"]:checked`).value);
+                answers[`q${i}`] = val;
+                totalScore += val;
             }
 
-            // 2. เช็คเงื่อนไขความเสี่ยงวิกฤต (hasRisk) ตามเกณฑ์แพทย์
-            const q9Score = parseInt(document.querySelector('input[name="q9"]:checked').value);
+            const q9Score = answers.q9;
             const specialQ1 = document.querySelector('input[name="specialQ1"]:checked').value === "true";
             const specialQ2 = document.querySelector('input[name="specialQ2"]:checked').value === "true";
+            const hasRisk = q9Score >= 1 || specialQ1 || specialQ2;
+            const needAlert = hasRisk || totalScore >= 10;
 
-            // ถ้าข้อ 9 ได้คะแนนอย่างน้อย 1 คะแนน หรือ ข้อพิเศษตอบ "ใช่" ข้อใดข้อหนึ่ง = มีความเสี่ยงวิกฤตทันที
+            let levelText = "";
+            if (totalScore <= 4) levelText = "ไม่มีภาวะซึมเศร้า";
+            else if (totalScore <= 9) levelText = "มีภาวะซึมเศร้าเล็กน้อย";
+            else if (totalScore <= 14) levelText = "มีภาวะซึมเศร้าปานกลาง";
+            else if (totalScore <= 19) levelText = "มีภาวะซึมเศร้ามาก";
+            else levelText = "มีภาวะซึมเศร้ารุนแรง";
+
+            const payload = {
+                lineUserId: userLineId,
+                displayName: userDisplayName,
+                studentName: document.getElementById("studentName").value,
+                studentAge: document.getElementById("studentAge").value,
+                studentGender: document.getElementById("studentGender").value,
+                studentClass: document.getElementById("studentClass").value,
+                school: document.getElementById("school").value,
+                parentPhone: document.getElementById("parentPhone").value,
+                totalScore,
+                levelText,
+                hasRisk,
+                needAlert,
+                ...answers,
+                q10: specialQ1 ? "ใช่" : "ไม่ใช่",
+                q11: specialQ2 ? "ใช่" : "ไม่ใช่",
+                submittedAt: new Date().toISOString()
+            };
+
+            try {
+                await fetch(POWER_AUTOMATE_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                btn.innerText = "✅ ส่งข้อมูลเรียบร้อยแล้ว";
+                btn.classList.replace("bg-indigo-600", "bg-green-500");
+                setTimeout(() => { try { if (liff.isInClient()) liff.closeWindow(); } catch(e){} }, 2000);
+            } catch (err) {
+                console.error(err);
+                btn.disabled = false;
+                btn.innerText = "เกิดข้อผิดพลาด กรุณาลองใหม่";
+                btn.classList.replace("bg-indigo-600", "bg-red-500");
+            }
+        });
+
+        initializeLiffApp();
+    </script>
+</body>
+</html>
